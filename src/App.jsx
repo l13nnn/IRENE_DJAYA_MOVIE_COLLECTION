@@ -8,23 +8,20 @@ function App () {
   const [search, setSearch] = useState('');
   const [filtered, setFiltered] = useState([]);
   
-const getData = async () => {
+const getData = async (barbie) => {
   try {
-    Swal.fire({
-      title: 'Loading',
-      text: 'Please wait',
-      icon: 'info',
-      allowOutsideClick: false,
-      showConfirmButton: false
-    })
-    const response = await axios.get('https://imdb.iamidiotareyoutoo.com/search?q=barbie');
+    const response = await axios.get(`https://imdb.iamidiotareyoutoo.com/search?q=${barbie}`);
     setData(response.data.description);
     setFiltered(response.data.description);
-    Swal.close();
     Swal.fire('Success', 'Movie loaded successfully', 'success')
   } catch (error) {
-    Swal.close()
-    Swal.fire('Error', 'Failed to loaded movie', 'error')
+    if (barbie.length === 0) {
+      Swal.fire({
+        icon: 'question', title: 'Please type something..', showConfirmButton: 'Try again'})
+      console.log(error);
+    } else {
+      Swal.fire({
+        icon: 'Error', title: 'Failed to loaded movie', showConfirmButton: 'Try again'})}
     console.log(error);
   }
 }
@@ -38,10 +35,11 @@ const filteredMovies = () => {
     return movie['#TITLE'].toLowerCase().includes(search.toLowerCase());
   })
   setFiltered(filtering);
+  getData(search);
 }
 
 useEffect (() => {
-  getData();
+  getData('barbie');
 }, []);
 
 return (
